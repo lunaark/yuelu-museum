@@ -84,13 +84,15 @@ a {
   display: grid;
   place-items: center;
   flex: 0 0 auto;
+  overflow: hidden;
   border-radius: 50%;
-  color: var(--accent);
-  background:
-    radial-gradient(circle at 34% 34%, rgba(255, 255, 255, 0.88), transparent 30%),
-    radial-gradient(circle at 62% 62%, var(--accent-soft), transparent 55%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.12));
   box-shadow: var(--shadow-soft);
+}
+
+.brand-orb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand-block h1 {
@@ -167,7 +169,7 @@ a {
 
 .app-grid {
   display: grid;
-  grid-template-columns: minmax(240px, 300px) minmax(560px, 1fr) minmax(300px, 380px);
+  grid-template-columns: minmax(220px, 260px) minmax(620px, 1fr) minmax(320px, 400px);
   align-items: start;
   gap: 20px;
   max-width: 1880px;
@@ -414,7 +416,7 @@ a {
 
 .stage-panel {
   position: relative;
-  min-height: 820px;
+  min-height: 1000px;
   padding: 28px;
   overflow: hidden;
   animation: scale-in 560ms ease both;
@@ -1460,4 +1462,474 @@ a {
   .compare-row > b {
     justify-self: center;
   }
+}
+
+/* ===== 文物展厅 · 改造布局 ===== */
+
+/* 展签式开场（中间顶部） */
+.artifact-plaque {
+  position: relative;
+  z-index: 5;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.plaque-step {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.artifact-plaque h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 3.4rem;
+  font-weight: 500;
+  line-height: 0.96;
+}
+
+.plaque-type {
+  margin: 8px 0 0;
+  color: rgba(55, 48, 40, 0.6);
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-style: italic;
+}
+
+.plaque-intro {
+  margin: 14px 0 18px;
+  max-width: 680px;
+  color: rgba(55, 48, 40, 0.82);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.plaque-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 32px;
+}
+
+.plaque-meta-item {
+  display: grid;
+  gap: 3px;
+}
+
+.plaque-label {
+  color: rgba(55, 48, 40, 0.5);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+}
+
+.plaque-value {
+  color: #332d24;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.plaque-value.is-abroad {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.abroad-tag {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(189, 81, 77, 0.12);
+  color: #b5514d;
+  font-size: 0.74rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* canvas 位置重新计算：展签更高，给它更多空间 */
+.canvas-wrap {
+  inset: 285px 22px 150px;
+}
+
+/* 部件 tab（② 看门道） */
+.part-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.part-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(55, 48, 40, 0.7);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.part-tab:hover {
+  border-color: var(--accent);
+}
+
+.part-tab.is-active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.part-tab .color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.part-note {
+  margin: 16px 0 0;
+  color: rgba(55, 48, 40, 0.8);
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+
+/* 折叠面板（③ ④） */
+.collapse-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.collapse-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 18px 20px;
+  border: none;
+  background: transparent;
+  color: #332d24;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.collapse-head svg {
+  transition: transform 200ms ease;
+  color: rgba(55, 48, 40, 0.5);
+}
+
+.collapse-head svg.is-open {
+  transform: rotate(180deg);
+}
+
+.collapse-body {
+  padding: 0 20px 20px;
+  animation: fade-in 240ms ease both;
+}
+
+.collapse-body p {
+  margin: 0;
+  color: rgba(55, 48, 40, 0.82);
+  font-size: 0.94rem;
+  line-height: 1.75;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 朝代徽章（左侧列表） */
+.era-badge {
+  flex: 0 0 auto;
+  min-width: 32px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: var(--serif);
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* 去掉空圆后，detail-hero 单列、副标题不换行 */
+.detail-hero.no-orb {
+  display: block;
+  padding-left: 2px;
+}
+
+.detail-hero.no-orb p {
+  white-space: nowrap;
+}
+
+/* ③ 文物的故事 */
+.story-panel {
+  padding: 22px 22px 24px;
+}
+
+.story-text {
+  margin: 0 0 14px;
+  color: rgba(45, 38, 30, 0.86);
+  font-size: 0.96rem;
+  line-height: 1.85;
+  text-align: justify;
+}
+
+.story-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ④ 你可能好奇（Q&A 手风琴）*/
+.qa-panel {
+  padding: 22px 22px 12px;
+}
+
+.qa-list {
+  display: grid;
+  gap: 2px;
+}
+
+.qa-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.qa-item:last-child {
+  border-bottom: none;
+}
+
+.qa-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 15px 0;
+  border: none;
+  background: transparent;
+  color: #332d24;
+  font-size: 0.96rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.qa-question:hover {
+  color: var(--accent);
+}
+
+.qa-question svg {
+  flex: 0 0 auto;
+  color: rgba(55, 48, 40, 0.4);
+  transition: transform 200ms ease;
+}
+
+.qa-question svg.is-open {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.qa-answer {
+  margin: 0;
+  padding: 0 0 16px;
+  color: rgba(55, 48, 40, 0.78);
+  font-size: 0.92rem;
+  line-height: 1.8;
+  animation: fade-in 220ms ease both;
+}
+
+/* 左侧·关于本展 */
+.about-panel {
+  padding: 18px 20px;
+}
+
+.about-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  color: var(--accent);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.about-panel p {
+  margin: 0;
+  color: rgba(55, 48, 40, 0.72);
+  font-size: 0.86rem;
+  line-height: 1.75;
+}
+
+/* 中间·操作提示 */
+.stage-hint {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 86px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  color: rgba(55, 48, 40, 0.45);
+  font-size: 0.82rem;
+}
+
+.stage-hint svg {
+  flex: 0 0 auto;
+  opacity: 0.7;
+}
+
+/* 底部页脚 */
+.site-footer {
+  max-width: 1880px;
+  margin: 28px auto 8px;
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(251, 247, 238, 0.5);
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
+  padding-bottom: 18px;
+  border-bottom: 1px dashed rgba(87, 78, 64, 0.2);
+  color: var(--accent);
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.footer-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 40px;
+}
+
+.footer-col h4 {
+  margin: 0 0 10px;
+  color: #332d24;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.footer-col p {
+  margin: 0 0 10px;
+  color: rgba(55, 48, 40, 0.66);
+  font-size: 0.86rem;
+  line-height: 1.7;
+}
+
+.footer-col a {
+  color: var(--accent);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.footer-col a:hover {
+  border-bottom-color: var(--accent);
+}
+
+.footer-col ul {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footer-col li {
+  color: rgba(55, 48, 40, 0.6);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* 关于本展·联系方式 */
+.about-contact {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(87, 78, 64, 0.2);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.contact-label {
+  flex: 0 0 auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.contact-value {
+  color: #332d24;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+/* 页脚联系方式 */
+.footer-contact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 14px;
+}
+
+.footer-contact .contact-label {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.footer-contact .contact-value {
+  margin-right: 6px;
+  color: #332d24;
+  font-size: 0.86rem;
+  font-weight: 500;
+}
+
+/* 顶栏右侧署名 */
+.topbar-tag {
+  display: grid;
+  gap: 4px;
+  text-align: right;
+  flex: 0 0 auto;
+}
+
+.topbar-tag span {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.topbar-tag em {
+  font-style: normal;
+  font-size: 0.86rem;
+  color: rgba(55, 48, 40, 0.55);
 }

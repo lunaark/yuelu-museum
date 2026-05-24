@@ -901,18 +901,8 @@ function CellModel({
 
   return (
     <group ref={group} position={[0, 0, 0]}>
-      {cell.modelAsset ? (
+      {cell.modelAsset && (
         <AssetCellModel cell={cell} asset={cell.modelAsset} {...common} />
-      ) : (
-        <>
-          {cell.modelKind === "plant" && <PlantModel {...common} />}
-          {cell.modelKind === "whiteBlood" && <WhiteBloodModel {...common} />}
-          {cell.modelKind === "neuron" && <NeuronModel {...common} />}
-          {cell.modelKind === "epithelial" && <EpithelialModel {...common} />}
-          {cell.modelKind === "bacteria" && <BacteriaModel {...common} />}
-          {cell.modelKind === "animal" && <AnimalModel {...common} />}
-          {cell.modelKind === "muscle" && <MuscleModel {...common} />}
-        </>
       )}
     </group>
   );
@@ -948,11 +938,11 @@ export function CellScene({
 
   return (
     <Canvas
-      key={resetKey}
+      key={`${cell.id}-${resetKey}`}
       className={`cell-canvas${nativeMaterial ? " is-native-asset" : ""}`}
       dpr={[1, 2]}
       shadows
-      gl={{ antialias: true, alpha: true, premultipliedAlpha: false }}
+      gl={{ antialias: true, alpha: true, premultipliedAlpha: false, preserveDrawingBuffer: true }}
       camera={{ position: [0, 0.2, 5.8], fov: 38 }}
     >
       {!nativeMaterial && <color attach="background" args={["#fbf7ee"]} />}

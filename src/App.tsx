@@ -1,82 +1,37 @@
 import {
-  ArrowRight,
-  BookOpen,
   Box,
-  Brain,
   Camera,
   ChevronDown,
-  CircleDot,
-  Gauge,
-  EyeOff,
-  Grid3X3,
   Heart,
   Info,
   Leaf,
-  MessageCircle,
-  Library,
-  Microscope,
-  Plus,
   RotateCcw,
-  Settings,
   Sparkles,
-  Star,
-  Target,
-  type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { CellScene } from "./components/CellScene";
 import { cells, getCellById, type CellItem, type ViewMode } from "./data/cells";
 
-type ModeOption = {
-  id: ViewMode;
-  label: string;
-  Icon: LucideIcon;
-};
 
-const modeOptions: ModeOption[] = [
-  { id: "mesh", label: "Mesh", Icon: Box },
-  { id: "focus", label: "Focus", Icon: CircleDot },
-];
-
-const initialCell = getCellById("animal");
+const initialCell = getCellById("owlZun");
 
 function Header({ cell }: { cell: CellItem }) {
   return (
     <header className="topbar">
       <div className="brand-block">
         <div className="brand-orb" aria-hidden="true">
-          <Sparkles size={26} />
+          <img src="/logo.png" alt="" />
         </div>
         <div>
-          <h1>Cell Architecture Studio</h1>
-          <p>Explore life at the microscopic level</p>
+          <h1>华夏文物数字展厅</h1>
+          <p>穿越千年，触摸文明的温度</p>
         </div>
       </div>
 
-      <nav className="top-nav" aria-label="Primary">
-        <a href="#gallery">
-          <Grid3X3 size={24} />
-          <span>Gallery</span>
-        </a>
-        <a href="#library">
-          <Library size={24} />
-          <span>Library</span>
-        </a>
-        <a href="#notebooks">
-          <BookOpen size={24} />
-          <span>Notebooks</span>
-        </a>
-        <a href="#settings">
-          <Settings size={24} />
-          <span>Settings</span>
-        </a>
-        <button className="avatar-button" type="button" aria-label="User menu">
-          <span className="avatar-core" style={{ background: cell.accentSoft }}>
-            <span style={{ background: cell.accent }} />
-          </span>
-          <ChevronDown size={20} />
-        </button>
-      </nav>
+      <div className="topbar-tag">
+        <span>月鹿造物</span>
+        <em>8 件中国文物 · 3D 数字典藏</em>
+      </div>
     </header>
   );
 }
@@ -91,27 +46,9 @@ type SidebarProps = {
 };
 
 function MiniCell({ cell }: { cell: CellItem }) {
-  if (cell.renderImage?.url) {
-    return (
-      <span className="mini-cell has-preview" style={{ "--thumb": cell.accent } as CSSProperties}>
-        <img src={cell.renderImage.url} alt="" aria-hidden="true" />
-      </span>
-    );
-  }
-
-  if (cell.modelAsset?.previewUrl) {
-    return (
-      <span className="mini-cell has-preview" style={{ "--thumb": cell.accent } as CSSProperties}>
-        <img src={cell.modelAsset.previewUrl} alt="" aria-hidden="true" />
-      </span>
-    );
-  }
-
   return (
-    <span className={`mini-cell mini-cell-${cell.modelKind}`} style={{ "--thumb": cell.accent } as CSSProperties}>
-      <span />
-      <i />
-      <b />
+    <span className="mini-cell has-preview" style={{ "--thumb": cell.accent } as CSSProperties}>
+      <img src={cell.thumbnail} alt="" aria-hidden="true" />
     </span>
   );
 }
@@ -130,7 +67,7 @@ function Sidebar({
         <div className="panel-heading">
           <span>
             <Leaf size={18} />
-            Cell Types
+            文物分类 · 按年代
           </span>
           <ChevronDown size={18} />
         </div>
@@ -150,46 +87,22 @@ function Sidebar({
                   <strong>{cell.name}</strong>
                   <span>{cell.type}</span>
                 </span>
-                <span
-                  className={`favorite-dot ${favorites.has(cell.id) ? "is-on" : ""}`}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onToggleFavorite(cell.id);
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Favorite ${cell.name}`}
-                >
-                  <Star size={18} fill="currentColor" />
-                </span>
+                <span className="era-badge">{cell.era}</span>
               </button>
             );
           })}
         </div>
       </section>
 
-      <section className="panel organelle-panel">
-        <div className="panel-heading">
-          <span>
-            <Sparkles size={16} />
-            Organelles
-          </span>
-          <ChevronDown size={18} />
+      <section className="panel about-panel">
+        <div className="about-head">
+          <Info size={15} />
+          <span>关于本展</span>
         </div>
-
-        <div className="organelle-list">
-          {selectedCell.organelles.map((organelle) => (
-            <button
-              className={`organelle-row ${activeOrganelle === organelle.id ? "is-active" : ""}`}
-              type="button"
-              key={organelle.id}
-              onClick={() => onSelectOrganelle(organelle.id)}
-            >
-              <span className="color-dot" style={{ background: organelle.color }} />
-              <span>{organelle.name}</span>
-            </button>
-          ))}
-        </div>
+        <p>
+          8 件中国文物的 3D 数字典藏，跨越商代至明清三千余年。其中 5 件现流落海外，
+          愿你在屏幕前，也能与它们隔空相望。
+        </p>
       </section>
     </aside>
   );
@@ -222,39 +135,83 @@ function Stage({
   onReset,
   onToast,
 }: StageProps) {
+  function captureScreenshot() {
+    const canvas =
+      document.querySelector<HTMLCanvasElement>("canvas.cell-canvas") ??
+      document.querySelector<HTMLCanvasElement>(".canvas-wrap canvas");
+    if (!canvas) {
+      onToast("没有找到模型画面。");
+      return;
+    }
+    const w = canvas.width;
+    const h = canvas.height;
+    if (!w || !h) {
+      onToast("画面尚未就绪，请稍候再试。");
+      return;
+    }
+    const pad = Math.round(h * 0.12);
+    const out = document.createElement("canvas");
+    out.width = w;
+    out.height = h + pad;
+    const ctx = out.getContext("2d");
+    if (!ctx) {
+      onToast("截图失败。");
+      return;
+    }
+    // 背景
+    ctx.fillStyle = "#fbf7ee";
+    ctx.fillRect(0, 0, out.width, out.height);
+    // 模型画面
+    ctx.drawImage(canvas, 0, 0, w, h);
+    // 底部水印：文物名 + 展厅署名
+    const cx = out.width / 2;
+    const baseY = h + pad * 0.42;
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#2d261e";
+    ctx.font = `600 ${Math.round(h * 0.045)}px "Iowan Old Style", Georgia, serif`;
+    ctx.fillText(`${cell.name} · ${cell.dynasty}`, cx, baseY);
+    ctx.fillStyle = "rgba(55,48,40,0.5)";
+    ctx.font = `${Math.round(h * 0.028)}px sans-serif`;
+    ctx.fillText("月鹿造物 · 华夏文物数字展厅", cx, baseY + pad * 0.36);
+
+    try {
+      const url = out.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${cell.name}-月鹿造物.png`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      onToast("已保存截图。");
+    } catch (e) {
+      onToast("截图失败：" + String(e).slice(0, 60));
+    }
+  }
+
   return (
     <main className="stage-column">
       <section className="stage-panel">
-        <div className="stage-title">
-          <div>
-            <h2>{cell.name}</h2>
-            <p>{cell.type}</p>
-          </div>
-
-          <div className="view-card">
-            <span>View Mode</span>
-            <div className="mode-switcher">
-              {modeOptions.map(({ id, label, Icon }) => (
-                <button
-                  key={id}
-                  type="button"
-                  className={viewMode === id ? "is-active" : ""}
-                  onClick={() => onModeChange(id)}
-                  title={label}
-                >
-                  <Icon size={22} />
-                </button>
-              ))}
+        <div className="artifact-plaque">
+          <div className="plaque-step">一 · 它是什么</div>
+          <h2>{cell.name}</h2>
+          <p className="plaque-type">{cell.type}</p>
+          <p className="plaque-intro">{cell.intro}</p>
+          <div className="plaque-meta">
+            <div className="plaque-meta-item">
+              <span className="plaque-label">年代</span>
+              <span className="plaque-value">{cell.dynasty}</span>
             </div>
-            <label className="toggle-line">
-              <span>Cross Section</span>
-              <input
-                type="checkbox"
-                checked={crossSection}
-                onChange={(event) => onCrossSectionChange(event.target.checked)}
-              />
-              <i />
-            </label>
+            <div className="plaque-meta-item">
+              <span className="plaque-label">出土地</span>
+              <span className="plaque-value">{cell.occurrence.title}</span>
+            </div>
+            <div className="plaque-meta-item">
+              <span className="plaque-label">现藏</span>
+              <span className={`plaque-value ${cell.museumAbroad ? "is-abroad" : ""}`}>
+                {cell.museum}
+                {cell.museumAbroad && <em className="abroad-tag">流落海外</em>}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -276,32 +233,22 @@ function Stage({
             onClick={() => onAutoRotateChange(!autoRotate)}
           >
             <RotateCcw size={20} />
-            Rotate
-          </button>
-          <button type="button" onClick={() => onModeChange("focus")}>
-            <CircleDot size={20} />
-            Isolate
-          </button>
-          <button type="button" onClick={() => onModeChange("focus")}>
-            <EyeOff size={20} />
-            Hide Others
+            自动旋转
           </button>
           <button type="button" onClick={onReset}>
             <RotateCcw size={20} />
-            Reset View
+            重置视角
+          </button>
+          <button type="button" onClick={captureScreenshot}>
+            <Camera size={20} />
+            截图保存
           </button>
         </div>
 
-        <div className="export-toolbar">
-          <button type="button" onClick={() => onToast("截图功能这里先做占位。")}>
-            <Camera size={20} />
-            Screenshot
-          </button>
-          <button type="button" onClick={() => onToast("GLB 导出需要接入模型导出管线。")}>
-            <Box size={20} />
-            GLB Export
-          </button>
-        </div>
+        <p className="stage-hint">
+          <Box size={15} />
+          拖动旋转 · 滚轮缩放 · 在右侧切换部件，凑近看细节
+        </p>
       </section>
     </main>
   );
@@ -311,276 +258,112 @@ type RightPanelProps = {
   cell: CellItem;
   activeOrganelle: string;
   favorites: Set<string>;
-  mastery: number;
-  viewedCellCount: number;
-  viewedOrganelleCount: number;
-  totalOrganelleCount: number;
-  tutorPrompt: string;
   onToggleFavorite: (id: string) => void;
-  onTutorPrompt: (prompt: string) => void;
+  onSelectPart: (id: string) => void;
 };
-
-function buildTutorPrompts(cell: CellItem, organelle: CellItem["organelles"][number]) {
-  return [
-    `Explain how ${organelle.name} helps a ${cell.name} stay alive.`,
-    `Quiz me on the visual differences between ${cell.name} and ${getCellById(cell.comparison).name}.`,
-    `Guide me through finding ${organelle.name} inside the 3D model.`,
-  ];
-}
 
 function RightPanel({
   cell,
   activeOrganelle,
   favorites,
-  mastery,
-  viewedCellCount,
-  viewedOrganelleCount,
-  totalOrganelleCount,
-  tutorPrompt,
   onToggleFavorite,
-  onTutorPrompt,
+  onSelectPart,
 }: RightPanelProps) {
   const organelle = cell.organelles.find((item) => item.id === activeOrganelle) ?? cell.organelles[0];
-  const tutorPrompts = buildTutorPrompts(cell, organelle);
+  const [openInsight, setOpenInsight] = useState(false);
 
   return (
     <aside className="right-rail">
       <section className="panel details-panel">
         <div className="panel-heading detail-heading">
-          <span>Organelle Details</span>
-          <button type="button" onClick={() => onToggleFavorite(cell.id)} aria-label="Toggle favorite">
+          <span>二 · 看门道 · 细节</span>
+          <button type="button" onClick={() => onToggleFavorite(cell.id)} aria-label="收藏">
             <Heart size={22} fill={favorites.has(cell.id) ? "currentColor" : "none"} />
           </button>
         </div>
 
-        <div className="detail-hero">
-          <span className="organelle-orb" style={{ background: organelle.color }} />
+        <div className="part-tabs">
+          {cell.organelles.map((part) => (
+            <button
+              type="button"
+              key={part.id}
+              className={`part-tab ${activeOrganelle === part.id ? "is-active" : ""}`}
+              onClick={() => onSelectPart(part.id)}
+            >
+              <span className="color-dot" style={{ background: part.color }} />
+              {part.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="detail-hero no-orb">
           <div>
             <h3>{organelle.name}</h3>
             <p>{organelle.subtitle}</p>
           </div>
         </div>
 
-        <dl className="attribute-list">
-          {organelle.attributes.map((item) => (
-            <div key={item.label}>
-              <dt>{item.label}</dt>
-              <dd>{item.value}</dd>
+        <p className="part-note">{organelle.note}</p>
+      </section>
+
+      {cell.story && (
+        <section className="panel story-panel">
+          <div className="panel-heading">
+            <span>三 · 听它说 · 文物的故事</span>
+          </div>
+          {cell.story.split("\n\n").map((para, i) => (
+            <p key={i} className="story-text">{para}</p>
+          ))}
+        </section>
+      )}
+
+      {cell.qa && cell.qa.length > 0 && (
+        <section className="panel qa-panel">
+          <div className="panel-heading">
+            <span>四 · 你可能好奇</span>
+          </div>
+          <div className="qa-list">
+            {cell.qa.map((item, i) => (
+              <QAItem key={i} q={item.q} a={item.a} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {!cell.story && (
+        <section className="panel collapse-panel">
+          <button
+            type="button"
+            className="collapse-head"
+            onClick={() => setOpenInsight((v) => !v)}
+          >
+            <span>三 · 以小见大 · 文化内涵</span>
+            <ChevronDown size={18} className={openInsight ? "is-open" : ""} />
+          </button>
+          {openInsight && (
+            <div className="collapse-body">
+              <p>{cell.occurrence.body}</p>
+              <div className="fun-fact" style={{ marginTop: 14 }}>
+                <Sparkles size={18} />
+                <span>{organelle.fact}</span>
+              </div>
             </div>
-          ))}
-          <div>
-            <dt>Label</dt>
-            <dd>
-              <span className="mini-toggle is-on" />
-              <span className="detail-dot" style={{ background: organelle.color }} />
-            </dd>
-          </div>
-        </dl>
-      </section>
-
-      <section className="panel notes-panel">
-        <div className="panel-heading">
-          <span>Biological Notes</span>
-        </div>
-        <p>{organelle.note}</p>
-        <div className="fun-fact">
-          <span>Fun Fact: {organelle.fact}</span>
-          <Sparkles size={18} />
-        </div>
-      </section>
-
-      <section className="panel learning-panel">
-        <div className="panel-heading">
-          <span>
-            <Brain size={17} />
-            AI Tutor
-          </span>
-        </div>
-
-        <div className="mastery-meter" style={{ "--progress": `${mastery}%` } as CSSProperties}>
-          <div>
-            <Gauge size={18} />
-            <span>Mastery</span>
-            <strong>{mastery}%</strong>
-          </div>
-          <i>
-            <b />
-          </i>
-          <small>
-            {viewedCellCount}/{cells.length} cells explored · {viewedOrganelleCount}/{totalOrganelleCount} organelles inspected
-          </small>
-        </div>
-
-        <div className="lesson-focus">
-          <span>
-            <Target size={17} />
-            Current lesson focus
-          </span>
-          <p>
-            Locate <strong>{organelle.name}</strong>, explain its role, then compare it with the matching structure in{" "}
-            {getCellById(cell.comparison).name}.
-          </p>
-        </div>
-
-        <div className="tutor-prompt">
-          <span>
-            <MessageCircle size={17} />
-            Prompt staged for AI tutor
-          </span>
-          <p>{tutorPrompt}</p>
-        </div>
-
-        <div className="prompt-list">
-          {tutorPrompts.map((prompt) => (
-            <button type="button" key={prompt} onClick={() => onTutorPrompt(prompt)}>
-              {prompt}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel occurrence-panel">
-        <div className="panel-heading">
-          <span>Where It Occurs</span>
-        </div>
-        <div className={`occurrence-art occurrence-${cell.occurrence.motif}`}>
-          <span />
-          <i />
-          <b />
-        </div>
-        <h4>{cell.occurrence.title}</h4>
-        <p>{cell.occurrence.body}</p>
-      </section>
+          )}
+        </section>
+      )}
     </aside>
   );
 }
 
-type BottomPanelsProps = {
-  cell: CellItem;
-  onCompare: () => void;
-  onToast: (message: string) => void;
-};
-
-function BottomPanels({ cell, onCompare, onToast }: BottomPanelsProps) {
-  const comparedCell = getCellById(cell.comparison);
-
+function QAItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
   return (
-    <section className="bottom-grid">
-      <div className="panel microscope-panel">
-        <div className="panel-heading">
-          <span>
-            Microscope View
-            <Info size={16} />
-          </span>
-        </div>
-        <div className="micro-card-row">
-          {cell.microscope.map((image) => (
-            <button
-              type="button"
-              key={image.label}
-              className={`micro-card pattern-${image.pattern}`}
-              style={{ "--micro": image.tone } as CSSProperties}
-              onClick={() => onToast(`${image.label} selected.`)}
-            >
-              <span />
-              <strong>{image.label}</strong>
-            </button>
-          ))}
-          <button type="button" className="micro-card add-card" onClick={() => onToast("Image upload is a planned step.")}>
-            <Plus size={28} />
-            <strong>Add Image</strong>
-          </button>
-        </div>
-      </div>
-
-      <div className="panel compare-panel">
-        <div className="panel-heading">
-          <span>
-            Compare Cells
-            <Info size={16} />
-          </span>
-        </div>
-        <div className="compare-row">
-          <div>
-            <MiniCell cell={cell} />
-            <span>
-              <strong>{cell.name}</strong>
-              <em>You are here</em>
-            </span>
-          </div>
-          <b>VS</b>
-          <div>
-            <span>
-              <strong>{comparedCell.name}</strong>
-              <em>{comparedCell.type}</em>
-            </span>
-            <MiniCell cell={comparedCell} />
-          </div>
-        </div>
-        <button type="button" className="comparison-button" onClick={onCompare}>
-          Open Comparison View
-          <ArrowRight size={20} />
-        </button>
-      </div>
-    </section>
-  );
-}
-
-type ComparisonModalProps = {
-  cell: CellItem;
-  open: boolean;
-  onClose: () => void;
-};
-
-function ComparisonModal({ cell, open, onClose }: ComparisonModalProps) {
-  const comparedCell = getCellById(cell.comparison);
-  if (!open) {
-    return null;
-  }
-
-  const currentOrganelle = cell.organelles.find((item) => item.id === cell.defaultOrganelle) ?? cell.organelles[0];
-  const comparedOrganelle =
-    comparedCell.organelles.find((item) => item.id === comparedCell.defaultOrganelle) ?? comparedCell.organelles[0];
-
-  return (
-    <div className="modal-layer" role="dialog" aria-modal="true" aria-label="Cell comparison">
-      <div className="comparison-modal">
-        <button className="modal-close" type="button" onClick={onClose}>
-          Close
-        </button>
-        <div className="comparison-modal-head">
-          <h3>Comparison View</h3>
-          <p>
-            {cell.name} compared with {comparedCell.name}
-          </p>
-        </div>
-        <div className="comparison-columns">
-          {[cell, comparedCell].map((item) => {
-            const organelle = item.id === cell.id ? currentOrganelle : comparedOrganelle;
-            return (
-              <section key={item.id}>
-                <MiniCell cell={item} />
-                <h4>{item.name}</h4>
-                <p>{item.type}</p>
-                <dl>
-                  <div>
-                    <dt>Default focus</dt>
-                    <dd>{organelle.name}</dd>
-                  </div>
-                  <div>
-                    <dt>Main note</dt>
-                    <dd>{organelle.subtitle}</dd>
-                  </div>
-                  <div>
-                    <dt>Occurs in</dt>
-                    <dd>{item.occurrence.title}</dd>
-                  </div>
-                </dl>
-              </section>
-            );
-          })}
-        </div>
-      </div>
+    <div className={`qa-item ${open ? "is-open" : ""}`}>
+      <button type="button" className="qa-question" onClick={() => setOpen((v) => !v)}>
+        <span>{q}</span>
+        <ChevronDown size={17} className={open ? "is-open" : ""} />
+      </button>
+      {open && <p className="qa-answer">{a}</p>}
     </div>
   );
 }
@@ -600,45 +383,14 @@ export default function App() {
   const [autoRotate, setAutoRotate] = useState(true);
   const [resetKey, setResetKey] = useState(0);
   const [favorites, setFavorites] = useState<Set<string>>(() => new Set([initialCell.id]));
-  const [viewedCells, setViewedCells] = useState<Set<string>>(() => new Set([initialCell.id]));
-  const [viewedOrganelleKeys, setViewedOrganelleKeys] = useState<Set<string>>(
-    () => new Set([`${initialCell.id}:${initialCell.defaultOrganelle}`]),
-  );
-  const [comparisonOpen, setComparisonOpen] = useState(false);
-  const [tutorPrompt, setTutorPrompt] = useState(
-    `Guide me through finding ${initialCell.organelles[0].name} inside the 3D model.`,
-  );
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | null>(null);
 
   const selectedCell = useMemo(() => getCellById(selectedCellId), [selectedCellId]);
-  const totalOrganelleCount = useMemo(
-    () => cells.reduce((total, cell) => total + cell.organelles.length, 0),
-    [],
-  );
-  const mastery = useMemo(() => {
-    const cellCoverage = viewedCells.size / cells.length;
-    const organelleCoverage = viewedOrganelleKeys.size / totalOrganelleCount;
-    return Math.round((cellCoverage * 0.42 + organelleCoverage * 0.58) * 100);
-  }, [totalOrganelleCount, viewedCells, viewedOrganelleKeys]);
 
   useEffect(() => {
     setActiveOrganelle(selectedCell.defaultOrganelle);
-    setComparisonOpen(false);
   }, [selectedCell]);
-
-  useEffect(() => {
-    setViewedCells((current) => {
-      const next = new Set(current);
-      next.add(selectedCell.id);
-      return next;
-    });
-    setViewedOrganelleKeys((current) => {
-      const next = new Set(current);
-      next.add(`${selectedCell.id}:${activeOrganelle}`);
-      return next;
-    });
-  }, [activeOrganelle, selectedCell.id]);
 
   function showToast(message: string) {
     setToast(message);
@@ -693,13 +445,8 @@ export default function App() {
             onAutoRotateChange={setAutoRotate}
             onReset={() => {
               setResetKey((key) => key + 1);
-              showToast("View reset.");
+              showToast("视角已重置。");
             }}
-            onToast={showToast}
-          />
-          <BottomPanels
-            cell={selectedCell}
-            onCompare={() => setComparisonOpen(true)}
             onToast={showToast}
           />
         </div>
@@ -708,20 +455,54 @@ export default function App() {
           cell={selectedCell}
           activeOrganelle={activeOrganelle}
           favorites={favorites}
-          mastery={mastery}
-          viewedCellCount={viewedCells.size}
-          viewedOrganelleCount={viewedOrganelleKeys.size}
-          totalOrganelleCount={totalOrganelleCount}
-          tutorPrompt={tutorPrompt}
           onToggleFavorite={toggleFavorite}
-          onTutorPrompt={(prompt) => {
-            setTutorPrompt(prompt);
-            showToast("AI tutor prompt staged.");
-          }}
+          onSelectPart={setActiveOrganelle}
         />
       </div>
 
-      <ComparisonModal cell={selectedCell} open={comparisonOpen} onClose={() => setComparisonOpen(false)} />
+      <footer className="site-footer">
+        <div className="footer-brand">
+          <Sparkles size={16} />
+          <span>月鹿造物 · 华夏文物数字展厅</span>
+        </div>
+        <div className="footer-cols">
+          <div className="footer-col">
+            <h4>界面灵感</h4>
+            <p>
+              基于开源项目{" "}
+              <a href="https://github.com/cclank/cell-architecture-studio" target="_blank" rel="noopener">
+                Cell Architecture Studio
+              </a>{" "}
+              改造，由细胞科普展厅重构为中国文物数字展厅。
+            </p>
+            <div className="footer-contact">
+              <span className="contact-label">公众号</span>
+              <span className="contact-value">月鹿造物</span>
+              <span className="contact-label">小红书</span>
+              <span className="contact-value">月鹿造物</span>
+            </div>
+          </div>
+          <div className="footer-col">
+            <h4>3D 模型来源</h4>
+            <p>
+              全部模型来自{" "}
+              <a href="https://sketchfab.com" target="_blank" rel="noopener">Sketchfab</a>
+              ，遵循各自的 CC 协议：
+            </p>
+            <ul>
+              {cells.map((cell) => (
+                <li key={cell.id}>
+                  <a href={cell.modelAsset?.sourceUrl} target="_blank" rel="noopener">
+                    {cell.name}
+                  </a>{" "}
+                  © {cell.modelAsset?.sourceLabel}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </footer>
+
       <Toast message={toast} />
     </div>
   );

@@ -1,146 +1,30 @@
-# Cell Architecture Studio
+# 华夏文物数字展厅
 
-![React](https://img.shields.io/badge/React-19.2-61DAFB?logo=react&logoColor=111)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=fff)
-![Vite](https://img.shields.io/badge/Vite-7.2-646CFF?logo=vite&logoColor=fff)
-![Three.js](https://img.shields.io/badge/Three.js-0.181-000000?logo=threedotjs&logoColor=fff)
-![3D Assets](https://img.shields.io/badge/GLB-native%20materials-4f8a3f)
-![Verification](https://img.shields.io/badge/verification-playwright%20screenshots-2ea44f)
-![License](https://img.shields.io/badge/license-MIT-blue)
-![Status](https://img.shields.io/badge/status-local%20prototype-f59e0b)
-[![Live Demo](https://img.shields.io/badge/live-demo-16a34a)](https://cell-architecture-studio-inky.vercel.app)
+一个可在浏览器中自由旋转、缩放、观赏的中国文物 3D 数字展厅。收录 8 件跨越商代至明清的中国文物，每件配有可交互的 3D 模型、分部件细节解说、有温度的文物故事，以及"你可能好奇"问答。
 
-An interactive cell architecture gallery built with React, Vite, Three.js, and staged GLB or procedural 3D cell assets. The project recreates a premium educational biology interface with selectable cell types, organelle details, comparison mode, responsive layout, and visual verification coverage.
+🔗 在线体验：https://lunaark.github.io/yuelu-museum/
 
-## Live Demo
+## 收录文物
 
-[Open the live Vercel deployment](https://cell-architecture-studio-inky.vercel.app)
+按年代排列：猫头鹰尊（商）· 三星堆青铜面具（商）· 青铜鼎（春秋）· 兵马俑（秦）· 唐三彩马（唐）· 永乐佛像（明）· 青花瓷瓶（清）· 青铜瑞兽香炉（明清）。
 
-[![Cell Architecture Studio demo](docs/media/cell-architecture-studio-demo.gif)](https://cell-architecture-studio-inky.vercel.app)
+## 技术栈
 
-[View the MP4 demo file](docs/media/cell-architecture-studio-demo.mp4)
+React + Vite + Three.js（@react-three/fiber / drei）。
 
-## Highlights
+## 致谢
 
-- Seven specimen views: plant cell, white blood cell, neuron, epithelial cell, bacteria cell, animal cell, and muscle cell.
-- High fidelity Plant Cell and White Blood Cell GLB rendering with native texture preservation.
-- Mesh first experience with 3D canvas rendering as the default view.
-- AI Tutor panel with learning prompts, lesson focus, and mastery tracking.
-- Model loading overlay for large GLB assets on slower networks.
-- Procedural fallback geometry for specimens that do not yet have production GLB assets.
-- Detail panel for organelles, microscope modes, specimen metadata, and comparison workflow.
-- Responsive desktop, compact, and mobile layouts with browser screenshot verification.
+界面灵感来自开源项目 [Cell Architecture Studio](https://github.com/cclank/cell-architecture-studio)（by cclank），本项目将其由细胞科普展厅重构为中国文物数字展厅。
 
-## Preview Modes
+所有 3D 模型来自 [Sketchfab](https://sketchfab.com)，遵循各自的 CC 协议，来源已在页面底部逐一标注。
 
-| Mode | Purpose |
-| --- | --- |
-| Mesh | Loads available GLB models or procedural Three.js geometry. |
-| Focus | Emphasizes selected organelles and supporting biological details. |
-
-## Tech Stack
-
-| Layer | Tools |
-| --- | --- |
-| App | React 19, TypeScript, Vite |
-| 3D | Three.js, React Three Fiber, Drei |
-| UI | CSS modules in `src/styles.css`, Lucide icons |
-| Assets | GLB models, transparent PNG thumbnails, NIH previews |
-| Verification | Playwright Core, PNG pixel metrics |
-
-## Project Structure
-
-```text
-.
-|-- docs/
-|   |-- media/
-|   `-- ASSETS.md
-|-- public/
-|   |-- cell-renders/
-|   |-- cell-renders-transparent/
-|   |-- models/
-|   `-- nih-previews/
-|-- scripts/
-|   `-- verify.mjs
-`-- src/
-    |-- App.tsx
-    |-- components/
-    |-- data/
-    `-- styles.css
-```
-
-## Getting Started
-
-Install dependencies:
+## 本地运行
 
 ```bash
 npm install
-```
-
-Run the local development server:
-
-```bash
 npm run dev
 ```
 
-Open the app:
+---
 
-```text
-http://127.0.0.1:5173/
-```
-
-Build for production:
-
-```bash
-npm run build
-```
-
-Run visual verification:
-
-```bash
-npm run verify
-```
-
-## Asset Notes
-
-The highest fidelity specimens are loaded from `public/models/` and configured in `src/data/cells.ts`.
-
-| Specimen | Current asset |
-| --- | --- |
-| Plant Cell | `public/models/plant-cell-first001.glb` |
-| White Blood Cell | `public/models/white-blood-cell-user.glb` |
-| Animal Cell | `public/models/animal-cell-nih.glb` |
-| Neuron | `public/models/neuron-nih.glb` |
-| Bacteria Wall | `public/models/bacteria-wall-nih.glb` |
-
-Transparent PNG references in `public/cell-renders-transparent/` are used for thumbnails and model previews. Detailed provenance is tracked in `docs/ASSETS.md`.
-
-## Verification
-
-`npm run verify` launches the local app, captures desktop, compact, mobile, and interaction screenshots, then checks canvas pixel metrics to catch blank renders or major layout regressions.
-
-Current coverage includes:
-
-- Desktop, compact, and mobile smoke checks.
-- Plant Cell GLB render check.
-- White Blood Cell GLB render check.
-- Bacteria mesh interaction check.
-- Comparison modal check.
-
-## Roadmap
-
-- Add production quality GLB models for the remaining specimens.
-- Add lazy loading and route level code splitting for 3D bundles.
-- Expand educational annotations for each organelle.
-- Add screenshot export and 3D export workflows.
-- Add asset license metadata directly into the UI.
-
-## License
-
-The application code is licensed under the MIT License. Included GLB models and image assets retain their documented provenance in `docs/ASSETS.md`.
-
-## Credits
-
-Special thanks to the original creator [@DilumSanjaya](https://x.com/DilumSanjaya) for the source inspiration and visual direction.
-
-Additional 3D model provenance is documented in `docs/ASSETS.md`.
+月鹿造物 · 用 AI 一个人做一座数字博物馆

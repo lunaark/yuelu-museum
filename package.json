@@ -1,15 +1,12 @@
 {
-  "name": "cell-architecture-studio",
-  "version": "0.1.0",
+  "name": "yuelu-museum",
+  "version": "1.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cclank/cell-architecture-studio.git"
+    "url": "git+https://github.com/lunaark/yuelu-museum.git"
   },
-  "bugs": {
-    "url": "https://github.com/cclank/cell-architecture-studio/issues"
-  },
-  "homepage": "https://github.com/cclank/cell-architecture-studio#readme",
+  "homepage": "https://lunaark.github.io/yuelu-museum/",
   "type": "module",
   "scripts": {
     "dev": "vite",
