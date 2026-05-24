@@ -14,6 +14,7 @@ import {
   type Material,
   type MeshStandardMaterialParameters,
 } from "three";
+import { asset as resolveAsset } from "../data/cells";
 import type { CellItem, CellModelAsset, ViewMode } from "../data/cells";
 
 type CellSceneProps = {
@@ -228,7 +229,7 @@ function AssetCellModel({
   cell: CellItem;
   asset: CellModelAsset;
 }) {
-  const { scene } = useGLTF(asset.url);
+  const { scene } = useGLTF(resolveAsset(asset.url));
   const clonedScene = useMemo(() => {
     const clone = scene.clone(true);
     let meshIndex = 0;

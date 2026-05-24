@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { CellScene } from "./components/CellScene";
-import { cells, getCellById, type CellItem, type ViewMode } from "./data/cells";
+import { asset, cells, getCellById, type CellItem, type ViewMode } from "./data/cells";
 
 
 const initialCell = getCellById("owlZun");
@@ -20,7 +20,7 @@ function Header({ cell }: { cell: CellItem }) {
     <header className="topbar">
       <div className="brand-block">
         <div className="brand-orb" aria-hidden="true">
-          <img src="/logo.png" alt="" />
+          <img src={asset("/logo.png")} alt="" />
         </div>
         <div>
           <h1>华夏文物数字展厅</h1>
@@ -48,7 +48,7 @@ type SidebarProps = {
 function MiniCell({ cell }: { cell: CellItem }) {
   return (
     <span className="mini-cell has-preview" style={{ "--thumb": cell.accent } as CSSProperties}>
-      <img src={cell.thumbnail} alt="" aria-hidden="true" />
+      <img src={asset(cell.thumbnail)} alt="" aria-hidden="true" />
     </span>
   );
 }

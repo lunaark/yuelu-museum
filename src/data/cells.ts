@@ -768,3 +768,9 @@ export const cells: CellItem[] = [
 export function getCellById(id: string) {
   return cells.find((cell) => cell.id === id) ?? cells[0];
 }
+
+// 把以 / 开头的绝对路径转成带 base 前缀的路径，兼容 GitHub Pages 子路径部署
+export function asset(path: string) {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  return path.startsWith("/") ? base + path : path;
+}
