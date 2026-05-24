@@ -53,6 +53,37 @@ function MiniCell({ cell }: { cell: CellItem }) {
   );
 }
 
+function MobileArtifactSwitcher({
+  selectedCell,
+  onSelectCell,
+}: {
+  selectedCell: CellItem;
+  onSelectCell: (id: string) => void;
+}) {
+  return (
+    <nav className="mobile-artifact-switcher" aria-label="切换文物模型">
+      {cells.map((cell) => {
+        const selected = selectedCell.id === cell.id;
+        return (
+          <button
+            key={cell.id}
+            type="button"
+            className={selected ? "is-active" : ""}
+            aria-current={selected ? "true" : undefined}
+            onClick={() => onSelectCell(cell.id)}
+          >
+            <MiniCell cell={cell} />
+            <span>
+              <strong>{cell.name}</strong>
+              <em>{cell.era}</em>
+            </span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
 function Sidebar({
   selectedCell,
   activeOrganelle,
@@ -247,7 +278,7 @@ function Stage({
 
         <p className="stage-hint">
           <Box size={15} />
-          拖动旋转 · 滚轮缩放 · 在右侧切换部件，凑近看细节
+          拖动旋转 · 双指缩放 · 切换细节，凑近看纹理
         </p>
       </section>
     </main>
@@ -421,6 +452,7 @@ export default function App() {
   return (
     <div className="app-shell" style={shellStyle}>
       <Header cell={selectedCell} />
+      <MobileArtifactSwitcher selectedCell={selectedCell} onSelectCell={setSelectedCellId} />
 
       <div className="app-grid">
         <Sidebar
